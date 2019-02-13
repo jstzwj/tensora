@@ -19,22 +19,6 @@ namespace tensora
         std::unique_ptr<idx_type[]> data;
         idx_type stack_data[DIMVECTOR_SMALL_VECTOR_OPTIMIZATION];
         idx_type dim_num;
-    private:
-        idx_type* get_data()
-        {
-            if(dim_num > DIMVECTOR_SMALL_VECTOR_OPTIMIZATION)
-                return data.get();
-            else
-                return stack_data;
-        }
-
-        const idx_type* get_data() const
-        {
-            if(dim_num > DIMVECTOR_SMALL_VECTOR_OPTIMIZATION)
-                return data.get();
-            else
-                return stack_data;
-        }
     public:
         DimVector()
             :data(nullptr), dim_num(0)
@@ -53,9 +37,66 @@ namespace tensora
             dim_num = size;
         }
 
+        DimVector(const DimVector& other)
+        {
+            if(other.dim_num > DIMVECTOR_SMALL_VECTOR_OPTIMIZATION)
+            {
+                data = std::make_unique<idx_type[]>(other.dim_num);
+                std::memcpy(data.get(), other.data.get(), other.dim_num * sizeof(idx_type));
+            }
+            else
+            {
+                std::memcpy(stack_data, other.stack_data, other.dim_num * sizeof(idx_type));
+            }
+            dim_num = other.dim_num;
+        }
+
+        DimVector(DimVector&& other)
+        {
+            if(other.dim_num > DIMVECTOR_SMALL_VECTOR_OPTIMIZATION)
+            {
+                data = std::move(other.data);
+            }
+            else
+            {
+                std::memcpy(stack_data, other.stack_data, other.dim_num * sizeof(idx_type));
+            }
+            dim_num = other.dim_num;
+        }
+
+        DimVector& operator=(const DimVector& other) noexcept
+        {
+            if(other.dim_num > DIMVECTOR_SMALL_VECTOR_OPTIMIZATION)
+            {
+                data = std::make_unique<idx_type[]>(other.dim_num);
+                std::memcpy(data.get(), other.data.get(), other.dim_num * sizeof(idx_type));
+            }
+            else
+            {
+                std::memcpy(stack_data, other.stack_data, other.dim_num * sizeof(idx_type));
+            }
+            dim_num = other.dim_num;
+            return *this;
+        }
+
+        DimVector& operator=(DimVector&& other) noexcept
+        {
+            if(other.dim_num > DIMVECTOR_SMALL_VECTOR_OPTIMIZATION)
+            {
+                data = std::move(other.data);
+            }
+            else
+            {
+                std::memcpy(stack_data, other.stack_data, other.dim_num * sizeof(idx_type));
+            }
+            dim_num = other.dim_num;
+            return *this;
+        }
+
         void push_back(idx_type idx)
         {
-
+            resize(size() + 1);
+            this->operator[](size() - 1) = idx;
         }
 
         void resize(idx_type size)
@@ -82,7 +123,8 @@ namespace tensora
                 if(dim_num > DIMVECTOR_SMALL_VECTOR_OPTIMIZATION)
                 {
                     data = std::unique_ptr<idx_type[]>(nullptr);
-                    std::memcpy(stack_data, data.get(), size * sizeof(idx_type));
+                    if (size != 0)
+                        std::memcpy(stack_data, data.get(), size * sizeof(idx_type));
                 }
             }
             dim_num = size;

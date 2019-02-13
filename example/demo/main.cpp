@@ -9,7 +9,8 @@ int main()
 	std::cout << vec.size()<< std::endl;
 	vec.resize(1);
 	vec[0] = 2;
-	vec[1] = 3;
+	vec.resize(2);
+	
 	std::cout << vec[0] << std::endl;
 	return 0;
 }
