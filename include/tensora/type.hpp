@@ -16,6 +16,7 @@ namespace tensora
     using u32 = std::uint32_t;
     using u64 = std::uint64_t;
     using idx_type = i32;
+    using size_type = i32;
 }
 
 #endif
