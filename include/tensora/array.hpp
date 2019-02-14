@@ -171,6 +171,11 @@ namespace tensora
             auto_strides();
         }
 
+        void reshape(std::initializer_list<idx_type> t)
+        {
+
+        }
+
         Array& operator ()(idx_type idx)
         {
             
