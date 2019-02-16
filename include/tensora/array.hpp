@@ -10,12 +10,12 @@ namespace tensora
 {
     // The real representation of all tensors.
     template<typename T>
-    class ArrayData
+    class ArrayStorage
     {
     public:
         std::unique_ptr<T[]> data;
         idx_type len;
-        ArrayData()
+        ArrayStorage()
             :data(nullptr), len(0)
         {
 
@@ -63,7 +63,7 @@ namespace tensora
     class Array
     {
     private:
-        std::shared_ptr<ArrayData<T>> rep;
+        std::shared_ptr<ArrayStorage<T>> rep;
         DimVector dimensions;
         idx_type offset;
 		StrideVector strides;
@@ -93,41 +93,41 @@ namespace tensora
         }
     public:
         Array()
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(), offset(0), strides(), order(layout_type::column_major)
         {
         }
 
         explicit Array(const DimVector& dimensions)
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(dimensions), offset(0), strides(), order(layout_type::column_major)
         {
             auto_strides();
         }
 
         explicit Array(const DimVector& dimensions, layout_type order)
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(dimensions), offset(0), strides(), order(order)
         {
 
         }
 
         explicit Array(const DimVector& dimensions, const StrideVector& strides)
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(dimensions), offset(0), strides(strides), order(layout_type::column_major)
         {
             auto_strides();
         }
 
         explicit Array(const DimVector& dimensions, const StrideVector& strides, layout_type order)
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(dimensions), offset(0), strides(strides), order(order)
         {
 
         }
 
         Array(const T& t)
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(), offset(0), strides(), order(order)
         {
             dimensions.resize(1);
@@ -135,14 +135,14 @@ namespace tensora
         }
 
         Array(nested_initializer_list_t<T, 1> t)
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(), offset(0), strides(), order(order)
         {
             dimensions.resize(1);
             auto_strides();
         }
         Array(nested_initializer_list_t<T, 2> t)
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(), offset(0), strides(), order(order)
         {
             dimensions.resize(2);
@@ -150,21 +150,21 @@ namespace tensora
         }
 
         Array(nested_initializer_list_t<T, 3> t)
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(), offset(0), strides(), order(order)
         {
             dimensions.resize(3);
             auto_strides();
         }
         Array(nested_initializer_list_t<T, 4> t)
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(), offset(0), strides(), order(order)
         {
             dimensions.resize(4);
             auto_strides();
         }
         Array(nested_initializer_list_t<T, 5> t)
-            :rep(new ArrayData<T>),
+            :rep(new ArrayStorage<T>),
             dimensions(), offset(0), strides(), order(order)
         {
             dimensions.resize(5);
