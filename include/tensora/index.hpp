@@ -1,5 +1,5 @@
-#ifndef TENSORA_INDEX_H
-#define TENSORA_INDEX_H
+#ifndef TENSOR_TENSOR_INDEX_H_
+#define TENSOR_TENSOR_INDEX_H_
 
 #include <cstdint>
 #include <cstring>
@@ -7,11 +7,11 @@
 #include <stdexcept>
 #include <memory>
 #include <utility>
-#include "type.hpp"
+#include <tensora/type.hpp>
 
-#define DIMVECTOR_SMALL_VECTOR_OPTIMIZATION 4
+#define DIMVECTOR_SMALL_VECTOR_OPTIMIZATION 5
 
-namespace tensora
+namespace traph
 {
     class DimVector
     {
@@ -93,6 +93,42 @@ namespace tensora
             return *this;
         }
 
+        bool operator==(const DimVector& other) const
+        {
+            if(dim_num != other.dim_num)
+                return false;
+
+            for(idx_type i = 0; i < dim_num; ++i)
+                if(this->operator[](i) != other[i])
+                    return false;
+
+            return true;
+        }
+
+        bool operator!=(const DimVector& other) const
+        {
+            if(dim_num != other.dim_num)
+                return true;
+
+            for(idx_type i = 0; i < dim_num; ++i)
+                if(this->operator[](i) != other[i])
+                    return true;
+
+            return false;
+        }
+
+        void erase(idx_type idx)
+        {
+            if(idx > 0 && idx < dim_num)
+            {
+                for(idx_type i = idx + 1; i < dim_num;++i)
+                {
+                    this->operator[](i - 1) = this->operator[](i);
+                }
+                resize(size() - 1);
+            }
+        }
+
         void push_back(idx_type idx)
         {
             resize(size() + 1);
@@ -132,8 +168,38 @@ namespace tensora
 
         idx_type size() const { return this->dim_num; }
 
+		idx_type flat_size() const
+		{
+			idx_type flat_size = 1;
+
+			if (size() == 0)
+			{
+				flat_size = 0;
+			}
+			else
+			{
+				for (idx_type i = 0; i < size(); ++i)
+				{
+					flat_size *= this->operator[](i);
+				}
+			}
+			
+			return flat_size;
+		}
+
+        bool in_range(idx_type dim) const
+        {
+            if(dim < 0)
+                dim = dim_num + dim;
+            
+            return dim >= 0 && dim < dim_num;
+        }
+
         idx_type& operator[](idx_type dim)
         {
+            if(dim < 0)
+                dim = dim_num + dim;
+            
             if(dim<0 || dim >= dim_num)
                 throw std::runtime_error("index out of dim vector size");
             
@@ -145,6 +211,9 @@ namespace tensora
 
         idx_type operator[](idx_type dim) const
         {
+            if(dim < 0)
+                dim = dim_num + dim;
+            
             if(dim<0 || dim >= dim_num)
                 throw std::runtime_error("index out of dim vector size");
             
@@ -154,6 +223,24 @@ namespace tensora
                 return stack_data[dim];
         }
     };
+
+
+    inline DimVector sort_index(DimVector dim)
+    {
+        DimVector sorted(dim.size());
+        for(int i = 0; i<dim.size(); ++i)
+            sorted[i] = i;
+        
+        for (int i = 0; i < dim.size() - 1; i++)
+            for (int j = 0; j < dim.size() - 1 - i; j++)
+                if (dim[j] < dim[j + 1])
+                {
+                    std::swap(dim[j], dim[j+1]);
+                    std::swap(sorted[j], sorted[j+1]);
+                }
+        
+        return sorted;
+    }
 }
 
 #endif
