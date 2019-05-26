@@ -1,5 +1,5 @@
-#ifndef TENSOR_TENSOR_INDEX_H_
-#define TENSOR_TENSOR_INDEX_H_
+#ifndef TENSORA_TENSOR_INDEX_H_
+#define TENSORA_TENSOR_INDEX_H_
 
 #include <cstdint>
 #include <cstring>
@@ -11,7 +11,7 @@
 
 #define DIMVECTOR_SMALL_VECTOR_OPTIMIZATION 5
 
-namespace traph
+namespace tensora
 {
     class DimVector
     {

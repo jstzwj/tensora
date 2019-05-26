@@ -1,7 +1,6 @@
 #include<iostream>
 
-#include<tensora/array.hpp>
-#include<tensora/index.hpp>
+#include<tensora/tensor.hpp>
 
 int main()
 {
@@ -14,7 +13,7 @@ int main()
 	
 	std::cout << vec[0] << std::endl;
 	*/
-	tensora::Array<tensora::i32> a;
+	tensora::Tensor<tensora::i32> a;
 	
 	return 0;
 }
