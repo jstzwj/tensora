@@ -1,0 +1,8 @@
+INCLUDE(ExternalProject)
+ExternalProject_Add(Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG 2f631bb8087a0355d2b23a75a28d936ce237659d
+    GIT_SHALLOW true
+    GIT_PROGRESS true
+    PREFIX ${TENSORA_PATH_DEPENDENCIES}/Catch2
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:path=${TENSORA_PATH_INSTALL}/ -DBUILD_SHARED_LIBS=OFF)
